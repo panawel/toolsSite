@@ -233,22 +233,44 @@ textarea:focus {
 /* Mobile Responsiveness */
 @media (max-width: 600px) {
   body {
-    padding: 10px;
-    /* Prevent centering from clipping top content when scrolling is needed */
+    padding: 5px;
+    /* Minimal padding */
     align-items: flex-start;
     height: auto;
   }
 
   .container {
-    padding: 20px;
+    padding: 15px;
+    /* Reduce internal padding */
     max-width: 100%;
+    margin: 0;
+    width: 100%;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   header h1 {
     font-size: 1.25rem;
+  }
+
+  /* Tighter controls for mobile */
+  .input-with-btn {
+    gap: 5px;
+    /* Reduce gap */
+  }
+
+  .btn-small {
+    padding: 0 10px;
+    /* Smaller button */
+    font-size: 0.8rem;
+  }
+
+  input {
+    font-size: 0.9rem;
+    /* Slightly smaller text to fit ISO string better */
+    padding: 8px;
   }
 }
