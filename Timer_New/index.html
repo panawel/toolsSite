@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMT Timer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <header>
+                <h1>GMT Timer</h1>
+                <p class="subtitle">Generate precise GMT timestamps</p>
+            </header>
+
+            <main>
+                <div class="control-group">
+                    <label class="radio-option">
+                        <input type="radio" name="offset" value="now">
+                        <span class="radio-custom"></span>
+                        <span class="label-text">Now</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="offset" value="plus_30" checked>
+                        <span class="radio-custom"></span>
+                        <span class="label-text">+30s</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="offset" value="plus_60">
+                        <span class="radio-custom"></span>
+                        <span class="label-text">+60s</span>
+                    </label>
+                </div>
+
+                <button id="generateBtn" class="primary-btn">Click Here</button>
+
+                <div class="result-group">
+                    <label for="resultOutput">Result (GMT)</label>
+                    <input type="text" id="resultOutput" readonly placeholder="YYYY-MM-DDTHH:MM:SS.mmmZ">
+                </div>
+
+                <button id="copyBtn" class="secondary-btn">Copy to Clipboard</button>
+            </main>
+        </div>
+    </div>
+    <script src="../theme-listener.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
