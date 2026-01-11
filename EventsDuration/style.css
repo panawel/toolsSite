@@ -119,10 +119,14 @@ input:focus {
 .input-with-btn {
   display: flex;
   gap: 10px;
+  max-width: 100%;
+  /* Ensure it doesn't exceed parent */
 }
 
 .input-with-btn input {
   flex: 1;
+  min-width: 0;
+  /* Allow shrinking below default content size */
 }
 
 .btn-small {
@@ -135,6 +139,10 @@ input:focus {
   cursor: pointer;
   font-weight: 600;
   transition: opacity 0.2s, background-color 0.3s ease;
+  white-space: nowrap;
+  /* Prevent text wrapping */
+  flex-shrink: 0;
+  /* Don't squash the button */
 }
 
 .btn-small:hover {
