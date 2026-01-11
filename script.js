@@ -36,6 +36,29 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme(newTheme);
     });
 
+    // Mobile resizing logic
+    window.addEventListener('resize', () => {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        if (isMobile && activeApps.size > 1) {
+            // Keep the most recently added app, or just the first one?
+            // Let's keep the last one likely, or just clear all but one.
+            // Implementation: Uncheck all except the last one inserted.
+            let keptOne = false;
+            // Iterate map in reverse or just take keys
+            const keys = Array.from(activeApps.keys());
+            // Keep the last opened one (last in Map)
+            const idToKeep = keys[keys.length - 1];
+
+            checkboxes.forEach(cb => {
+                if (cb.value !== idToKeep && cb.checked) {
+                    cb.checked = false;
+                    removeApp(cb.value);
+                }
+            });
+            updateGridLayout();
+        }
+    });
+
     // App Selection Logic
     checkboxes.forEach(cb => {
         // Initial check for pre-checked items (none by default, but good practice)
