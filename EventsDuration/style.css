@@ -224,7 +224,23 @@ textarea:focus {
 
 /* Mobile Responsiveness */
 @media (max-width: 600px) {
+  body {
+    padding: 10px;
+    /* Prevent centering from clipping top content when scrolling is needed */
+    align-items: flex-start;
+    height: auto;
+  }
+
+  .container {
+    padding: 20px;
+    max-width: 100%;
+  }
+
   .form-grid {
     grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 1.25rem;
   }
 }
