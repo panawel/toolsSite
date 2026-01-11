@@ -46,13 +46,26 @@ document.addEventListener('DOMContentLoaded', () => {
         cb.addEventListener('change', (e) => {
             const val = e.target.value;
             const path = e.target.dataset.path;
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
             if (e.target.checked) {
-                if (activeApps.size >= MAX_APPS) {
+                // Mobile: Only 1 app allowed
+                if (isMobile) {
+                    // Uncheck and remove all others
+                    checkboxes.forEach(box => {
+                        if (box !== e.target && box.checked) {
+                            box.checked = false;
+                            removeApp(box.value);
+                        }
+                    });
+                }
+                // Desktop: Max 4 apps check
+                else if (activeApps.size >= MAX_APPS) {
                     e.target.checked = false;
                     alert('Maximum 4 applications allowed in split screen.');
                     return;
                 }
+
                 addApp(val, path);
             } else {
                 removeApp(val);
