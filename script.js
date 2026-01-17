@@ -132,4 +132,80 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateGridLayout() {
         gridContainer.setAttribute('data-count', activeApps.size);
     }
+
+    // === Context Menu Logic ===
+    const contextMenu = document.getElementById('context-menu');
+    const openNewWindowBtn = document.getElementById('openNewWindow');
+    let rightClickedPath = null;
+    let rightClickedId = null;
+
+    // Attach right-click listener to tool items
+    checkboxes.forEach(cb => {
+        const label = cb.parentElement; // The .tool-item label
+        label.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            rightClickedPath = cb.dataset.path;
+            rightClickedId = cb.value;
+
+            // Position (mouse coordinates)
+            let { clientX: mouseX, clientY: mouseY } = e;
+
+            // Viewport bounds check for context menu
+            contextMenu.style.display = 'block'; // Show first to get dimensions
+            const menuWidth = contextMenu.offsetWidth;
+            const menuHeight = contextMenu.offsetHeight;
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+
+            if (mouseX + menuWidth > viewportWidth) {
+                mouseX = viewportWidth - menuWidth - 10;
+            }
+            if (mouseY + menuHeight > viewportHeight) {
+                mouseY = viewportHeight - menuHeight - 10;
+            }
+
+            contextMenu.style.top = `${mouseY}px`;
+            contextMenu.style.left = `${mouseX}px`;
+        });
+    });
+
+    // Close menu on click elsewhere
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#context-menu') === null) {
+            contextMenu.style.display = 'none';
+        }
+    });
+
+    // Window sizes map
+    const windowSizes = {
+        'email': { width: 1100, height: 750 },
+        'events': { width: 500, height: 750 },
+        'russia': { width: 450, height: 550 },
+        'timer': { width: 450, height: 550 }
+    };
+
+    // Handle "Open in New Window"
+    openNewWindowBtn.addEventListener('click', () => {
+        contextMenu.style.display = 'none';
+        if (rightClickedPath) {
+            const size = windowSizes[rightClickedId] || { width: 900, height: 700 };
+
+            // Center the window
+            const left = (window.screen.width - size.width) / 2;
+            const top = (window.screen.height - size.height) / 2;
+
+            // Standard flags for maximal compatibility across Chrome/Safari/Brave
+            const features = `width=${size.width},height=${size.height},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no,scrollbars=yes,resizable=yes`;
+
+            const newWindow = window.open(rightClickedPath, '_blank', features);
+
+            if (newWindow) {
+                const sendTheme = () => {
+                    newWindow.postMessage({ type: 'setTheme', theme: currentTheme }, '*');
+                };
+                setTimeout(sendTheme, 300);
+                setTimeout(sendTheme, 1000);
+            }
+        }
+    });
 });

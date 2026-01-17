@@ -354,3 +354,29 @@ iframe {
         min-height: 400px;
     }
 }
+
+/* === Context Menu === */
+.context-menu {
+    display: none;
+    position: absolute;
+    z-index: 10000;
+    width: 200px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    overflow: hidden;
+}
+
+.context-menu-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: background-color 0.1s;
+}
+
+.context-menu-item:hover {
+    background-color: var(--bg-secondary);
+}
