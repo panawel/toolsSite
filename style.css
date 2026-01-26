@@ -1,0 +1,382 @@
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f3f4f6;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --accent-color: #3b82f6;
+    --sidebar-width: 72px;
+    /* Fixed narrow width */
+    --transition-speed: 0.3s;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #1f2937;
+    --bg-secondary: #111827;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --border-color: #374151;
+    --accent-color: #60a5fa;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    height: 100%;
+}
+
+/* === Sidebar === */
+/* Simple fixed sidebar now. No wrapper logic needed really, but we can keep simple structure. */
+.sidebar-wrapper {
+    width: var(--sidebar-width);
+    height: 100%;
+    z-index: 1000;
+    flex-shrink: 0;
+    background: transparent;
+}
+
+.sidebar {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-primary);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    align-items: center;
+    /* Center everything */
+    overflow: visible;
+    /* Needed for tooltips to pop out! */
+    position: relative;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+
+/* Header Controls */
+.sidebar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+.sidebar-header h2 {
+    display: none;
+    /* Hide text */
+}
+
+.header-controls {
+    display: flex;
+    justify-content: center;
+}
+
+.icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-btn:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .icon-sun {
+    display: block;
+}
+
+[data-theme="dark"] .icon-moon {
+    display: none;
+}
+
+[data-theme="light"] .icon-sun {
+    display: none;
+}
+
+[data-theme="light"] .icon-moon {
+    display: block;
+}
+
+/* Tools List */
+.tools-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    align-items: center;
+}
+
+.tool-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    position: relative;
+    /* Context for tooltip */
+}
+
+.tool-item:hover {
+    background-color: var(--bg-secondary);
+}
+
+.tool-item input {
+    display: none;
+}
+
+/* Hide checks, use visual styles */
+.checkmark {
+    display: none;
+}
+
+.tool-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    filter: grayscale(100%) opacity(0.7);
+    /* Muted default */
+}
+
+/* Active State */
+.tool-item input:checked~.tool-icon {
+    filter: none;
+    /* Full color */
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.tool-item:has(input:checked) {
+    background-color: var(--bg-secondary);
+    box-shadow: inset 3px 0 0 0 var(--accent-color);
+    /* Left accent border */
+    border-radius: 0 8px 8px 0;
+    /* Flat left edge */
+}
+
+/* === Tooltip Logic === */
+.tool-name {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
+    background-color: #1f2937;
+    /* Dark tooltip always? or theme dependent? */
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 10000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+}
+
+/* Tooltips in light theme might need contrast. Let's stick to dark tooltip standard. */
+[data-theme="light"] .tool-name {
+    background-color: #374151;
+    /* Dark grey */
+}
+
+.tool-item:hover .tool-name {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(15px);
+}
+
+/* Arrow for tooltip */
+.tool-name::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent #1f2937 transparent transparent;
+    /* Match tooltip bg */
+}
+
+[data-theme="light"] .tool-name::before {
+    border-color: transparent #374151 transparent transparent;
+}
+
+
+.sidebar-footer {
+    display: none;
+    /* Hide footer in permanent mini mode */
+}
+
+
+/* Main View */
+.main-view {
+    flex: 1;
+    padding: 1rem;
+    overflow: hidden;
+    background-color: var(--bg-secondary);
+}
+
+.grid-container {
+    display: grid;
+    gap: 1rem;
+    height: 100%;
+    width: 100%;
+}
+
+.app-frame {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    background-color: var(--bg-primary);
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-secondary);
+}
+
+.grid-container[data-count="1"] {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.grid-container[data-count="2"] {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+.grid-container[data-count="3"],
+.grid-container[data-count="4"] {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar-wrapper {
+        width: 100% !important;
+        height: auto;
+    }
+
+    .sidebar {
+        width: 100% !important;
+        padding: 0.5rem;
+        flex-direction: row;
+        box-shadow: none;
+        border-bottom: 1px solid var(--border-color);
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .sidebar-header {
+        width: auto;
+        margin-bottom: 0;
+        margin-right: 15px;
+    }
+
+    .tools-list {
+        flex-direction: row;
+        width: auto;
+        gap: 5px;
+    }
+
+    .tool-item:has(input:checked) {
+        border-left: none;
+        border-bottom: 3px solid var(--accent-color);
+        border-radius: 8px 8px 0 0;
+    }
+
+    /* Disable tooltips on mobile */
+    .tool-name {
+        display: none !important;
+    }
+
+    .grid-container[data-count="2"],
+    .grid-container[data-count="3"],
+    .grid-container[data-count="4"] {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(auto-fill, 1fr);
+        overflow-y: auto;
+    }
+
+    .app-frame {
+        min-height: 400px;
+    }
+}
+
+/* === Context Menu === */
+.context-menu {
+    display: none;
+    position: absolute;
+    z-index: 10000;
+    width: 200px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    overflow: hidden;
+}
+
+.context-menu-item {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    transition: background-color 0.1s;
+}
+
+.context-menu-item:hover {
+    background-color: var(--bg-secondary);
+}

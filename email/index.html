@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TempMail - Premium Email Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="glass-header">
+            <div class="logo">
+                <span class="icon">✨</span>
+                <h1>TempMail</h1>
+            </div>
+
+            <div class="main-controls">
+                <div class="email-input-group">
+                    <input type="text" id="currentEmail" readonly placeholder="Generating..."
+                        aria-label="Current Email Address">
+                    <button id="copyBtn" class="icon-btn" title="Copy to clipboard">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+                <button id="generateBtn" class="primary-btn">
+                    <span>Generate New</span>
+                </button>
+                <button id="saveBtn" class="secondary-btn">
+                    <span>Save Address</span>
+                </button>
+            </div>
+
+        </header>
+
+        <main class="content-grid">
+            <!-- Sidebar: Saved Addresses -->
+            <aside class="glass-sidebar">
+                <div class="sidebar-header">
+                    <h2>Saved Addresses</h2>
+                    <div class="search-box">
+                        <input type="text" id="searchSaved" placeholder="Search saved emails...">
+                    </div>
+                </div>
+                <div class="saved-list" id="savedList">
+                    <!-- Saved items will be injected here -->
+                    <div class="empty-state">No saved emails yet</div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <section class="main-panel">
+                <!-- Inbox Section -->
+                <div class="glass-container inbox-section">
+                    <div class="section-header">
+                        <h3>Inbox</h3>
+                        <div id="refreshIndicator" class="refresh-indicator">
+                            <span class="pulse"></span> Polling for messages...
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="inboxTable">
+                            <thead>
+                                <tr>
+                                    <th>Sender</th>
+                                    <th>Subject</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inboxBody">
+                                <!-- Messages will be injected here -->
+                                <tr class="empty-row">
+                                    <td colspan="3">Select an email to view its inbox</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Message Section -->
+                <div class="glass-container message-section">
+                    <div class="section-header">
+                        <h3>Message Content</h3>
+                    </div>
+                    <div id="messageViewport" class="message-viewport">
+                        <div class="empty-state">Select a message from the inbox to read</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification system -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <script src="../theme-listener.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

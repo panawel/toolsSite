@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slot Uniqifier | Remove Duplicate Slot Names</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Default Dark Theme (Matches original) */
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-focus-bg: rgba(15, 23, 42, 0.8);
+
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --accent: #10b981;
+            --error: #ef4444;
+            --transition: all 0.3s ease;
+        }
+
+        body.light-theme {
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: rgba(0, 0, 0, 0.1);
+            --input-bg: #ffffff;
+            --input-focus-bg: #ffffff;
+        }
+
+        body.dark-theme {
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --input-bg: rgba(15, 23, 42, 0.6);
+            --input-focus-bg: rgba(15, 23, 42, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 0.1) 0, transparent 50%),
+                radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.1) 0, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            transition: var(--transition);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 0.8s ease-out;
+            transition: var(--transition);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.75rem, 5vw, 2.5rem);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #818cf8;
+            /* Fallback color */
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: clamp(0.875rem, 2vw, 1rem);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 850px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            position: relative;
+        }
+
+        .label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text-main);
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            resize: none;
+            transition: var(--transition);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            background: var(--input-focus-bg);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            flex-direction: column;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), #8b5cf6);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: fit-content;
+        }
+
+        .btn-primary svg {
+            display: none;
+            /* Hide by default */
+            animation: spin 1s linear infinite;
+        }
+
+        .btn-primary.loading svg {
+            display: block;
+            /* Show when loading */
+        }
+
+        .btn-copy {
+            background: var(--input-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.8rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-copy:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.5);
+            filter: brightness(1.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .stats {
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            min-height: 1.2rem;
+        }
+
+        .highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .copy-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--accent);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            z-index: 1000;
+        }
+
+        .copy-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Slot Uniqifier</h1>
+            <p class="subtitle">Extract unique "Slots Name" from your raw input list instantly.</p>
+        </header>
+
+        <div class="grid">
+            <div class="input-group">
+                <div class="label-row">
+                    <label for="inputList">Input List</label>
+                </div>
+                <textarea id="inputList" placeholder="Paste your list here..."></textarea>
+            </div>
+            <div class="input-group">
+                <div class="label-row">
+                    <label for="outputList">Unique Output</label>
+                    <button id="copyBtn" class="btn-copy">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
+                <textarea id="outputList" readonly placeholder="Result will appear here..."></textarea>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="processBtn" class="btn-primary">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83">
+                    </path>
+                </svg>
+                Remove Duplicates
+            </button>
+            <div id="statsInfo" class="stats"></div>
+        </div>
+    </div>
+
+    <div id="copyToast" class="copy-toast">Copied to clipboard!</div>
+
+    <script src="../theme-listener.js"></script>
+    <script>
+        const inputEl = document.getElementById('inputList');
+        const outputEl = document.getElementById('outputList');
+        const processBtn = document.getElementById('processBtn');
+        const copyBtn = document.getElementById('copyBtn');
+        const statsInfo = document.getElementById('statsInfo');
+        const copyToast = document.getElementById('copyToast');
+
+        processBtn.addEventListener('click', () => {
+            const rawValue = inputEl.value.trim();
+            if (!rawValue) {
+                showStats('Please enter some slot names.', true);
+                return;
+            }
+
+            // Show loading state
+            processBtn.classList.add('loading');
+            processBtn.disabled = true;
+
+            // Small delay to make it feel responsive and meaningful
+            setTimeout(() => {
+                // Detect format to preserve it
+                const hasQuotes = rawValue.includes('"');
+                const hasCommas = rawValue.includes(',');
+
+                // Smart Extraction
+                let items = [];
+
+                if (hasQuotes) {
+                    const regex = /"([^"]+)"/g;
+                    let match;
+                    while ((match = regex.exec(rawValue)) !== null) {
+                        items.push(match[1]);
+                    }
+                }
+
+                if (items.length === 0) {
+                    items = rawValue
+                        .split(/[\n,]+/)
+                        .map(item => item.trim())
+                        .filter(item => item.length > 0);
+                }
+
+                const originalCount = items.length;
+                const uniqueItems = [...new Set(items)];
+                const uniqueCount = uniqueItems.length;
+                const duplicatesFound = originalCount - uniqueCount;
+
+                let formattedOutput = '';
+                if (hasQuotes) {
+                    formattedOutput = uniqueItems.map(item => `        "${item}"${hasCommas ? ',' : ''}`).join('\n');
+                } else {
+                    formattedOutput = uniqueItems.join('\n');
+                }
+
+                outputEl.value = formattedOutput;
+
+                if (duplicatesFound > 0) {
+                    showStats(`Found <span class="highlight">${originalCount}</span> items. Removed <span class="highlight">${duplicatesFound}</span> duplicates.`);
+                } else {
+                    showStats(`Found <span class="highlight">${originalCount}</span> items. No duplicates found!`);
+                }
+
+                // Auto copy only if not mobile to be less intrusive
+                if (window.innerWidth > 850) {
+                    copyToClipboard(formattedOutput, false);
+                }
+
+                // Hide loading state
+                processBtn.classList.remove('loading');
+                processBtn.disabled = false;
+            }, 400);
+        });
+
+        copyBtn.addEventListener('click', () => {
+            copyToClipboard(outputEl.value);
+        });
+
+        function copyToClipboard(text, notify = true) {
+            if (text && navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    if (notify) showToast();
+                }).catch(err => {
+                    console.warn('Clipboard write failed:', err);
+                });
+            }
+        }
+
+        function showStats(msg, isError = false) {
+            statsInfo.innerHTML = msg;
+            statsInfo.style.color = isError ? 'var(--error)' : 'var(--text-muted)';
+        }
+
+        function showToast() {
+            copyToast.classList.add('show');
+            setTimeout(() => {
+                copyToast.classList.remove('show');
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>
